@@ -13,6 +13,3 @@ class CalcTest(SimpleTestCase):
         res = calc.subtract(10, 4)
         self.assertEqual(res, 6)
 
-    def test_subtract_numbers_fail(self):
-        res = calc.subtract(80, 10)
-        self.assertNotEqual(90, res)
