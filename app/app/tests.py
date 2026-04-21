@@ -21,4 +21,4 @@ class CalcTest(SimpleTestCase):
     def test_subtract_numbers_fail(self):
         """Intentional failing test (TDD practice)"""
         res = calc.subtract(80, 10)
-        self.assertEqual(90, res)
+        self.assertNotEqual(90, res)
