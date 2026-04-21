@@ -1,4 +1,5 @@
 # files wutomatically excluded to go in docker file.
+
 .git 
 .gitignore
 
