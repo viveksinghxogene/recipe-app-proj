@@ -1,4 +1,3 @@
-# Django command to wait for database
 import time
 from psycopg2 import OperationalError as Psycopg2Error
 from django.core.management.base import BaseCommand
