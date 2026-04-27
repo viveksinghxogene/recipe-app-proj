@@ -57,42 +57,42 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
-        def test_create_token_for_user(self):
-            user_details = {
+    def test_create_token_for_user(self):
+        user_details = {
                 'name': 'Test Name',
                 'email': 'test@example.com',
                 'password': 'test-user-password123',
                             }
-            create_user(**user_details)
+        create_user(**user_details)
 
-            payload = {
+        payload = {
                 'email': user_details['email'],
                 'password': user_details['password'],
             }
-            res = self.client.post(TOKEN_URL, payload)
+        res = self.client.post(TOKEN_URL, payload)
 
-            self.assertIn('token', res.data)
-            self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-        def test_create_token_bad_credentials(self):
-            create_user(email='test@example.com', password='goodpass')
+    def test_create_token_bad_credentials(self):
+        create_user(email='test@example.com', password='goodpass')
 
-            payload = {'email': 'test@example.com', 'password': 'badpass'}
-            res = self.client.post(TOKEN_URL, payload)
+        payload = {'email': 'test@example.com', 'password': 'badpass'}
+        res = self.client.post(TOKEN_URL, payload)
 
-            self.assertNotIn('token', res.data)
-            self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-        def test_create_token_blank_password(self):
-            payload = {'email': 'test@example.com', 'password': ''}
-            res = self.client.post(TOKEN_URL, payload)
+    def test_create_token_blank_password(self):
+        payload = {'email': 'test@example.com', 'password': ''}
+        res = self.client.post(TOKEN_URL, payload)
 
-            self.assertNotIn('token', res.data)
-            self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-        def test_retrieve_user_unauthorized(self):
-            res = self.client.get(ME_URL)
-            self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_retrieve_user_unauthorized(self):
+        res = self.client.get(ME_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateUserApiTests(TestCase):
