@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test import TestCase
-
+from decimal import Decimal
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Ingredient
+from core.models import Ingredient, Recipe
 from recipe.serializers import IngredientSerializer
 
 
@@ -17,6 +17,20 @@ def detail_url(ingredient_id):
 
 def create_user(email='user@example.com', password='testpass123'):
     return get_user_model().objects.create_user(email=email, password=password)
+
+def create_recipe(user, **params):
+    defaults = {
+        'title': 'Sample recipe title',
+        'time_minutes': 22,
+        'price': Decimal('5.25'),
+        'description': 'Sample description',
+        'link': 'http://example.com/recipe.pdf',
+    }
+
+    defaults.update(params)
+
+    recipe = Recipe.objects.create(user=user, **defaults)
+    return recipe
 
 
 class PublicIngredientsApiTests(TestCase):
@@ -39,7 +53,7 @@ class PrivateIngredientsApiTests(TestCase):
 
     def test_retrieve_ingredients(self):
         Ingredient.objects.create(user=self.user, name='Vivek')
-        Ingredient.objects.create(user=self.user, name='Singh ingredients')
+        Ingredient.objects.create(user=self.user, name='Singh')
 
         res = self.client.get(INGREDIENTS_URL)
 
@@ -82,7 +96,7 @@ class PrivateIngredientsApiTests(TestCase):
         recipe = create_recipe(user=self.user)
 
         payload = {'ingredients': [{'name': 'Limes'}]}
-        url = detail_url(recipe.id)
+        url = reverse('recipe:recipe-detail', args=[recipe.id])
         res = self.client.patch(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -96,7 +110,7 @@ class PrivateIngredientsApiTests(TestCase):
 
         ingredient2 = Ingredient.objects.create(user=self.user, name='Chili')
         payload = {'ingredients': [{'name': 'Chili'}]}
-        url = detail_url(recipe.id)
+        url = reverse('recipe:recipe-detail', args=[recipe.id])
         res = self.client.patch(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -109,7 +123,7 @@ class PrivateIngredientsApiTests(TestCase):
         recipe.ingredients.add(ingredient)
 
         payload = {'ingredients': []}
-        url = detail_url(recipe.id)
+        url = reverse('recipe:recipe-detail', args=[recipe.id])
         res = self.client.patch(url, payload, format='json')
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
