@@ -4,6 +4,7 @@ from decimal import Decimal
 from core import models
 from unittest.mock import patch
 
+
 def create_user(email="user@example.com", password="testpass123"):
     return get_user_model().objects.create_user(email, password)
 
@@ -71,6 +72,7 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(ingredient), ingredient.name)
+
     @patch('core.models.uuid.uuid4')
     def test_recipe_file_name_uuid(self, mock_uuid):
         uuid = 'test-uuid'
