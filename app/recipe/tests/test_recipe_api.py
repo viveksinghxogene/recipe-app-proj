@@ -169,11 +169,11 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
-    
+
     def test_create_recipe_with_new_tags(self):
         payload = {
-            'title':'Thai Prawn Curry',
-            'time_minutes':30,
+            'title': 'Thai Prawn Curry',
+            'time_minutes': 30,
             'price': Decimal('2.50'),
             'tags': [{'name': 'Thai'}, {'name': 'Dinner'}]
         }
@@ -193,15 +193,14 @@ class PrivateRecipeApiTests(TestCase):
             ).exists()
             self.assertTrue(exists)
 
-
     def test_create_recipe_with_existing_tags(self):
         tag_indian = Tag.objects.create(user=self.user, name='Indian')
 
         payload = {
-        'title': 'Pongal',
-        'time_minutes': 60,
-        'price': Decimal('4.50'),
-        'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
+            'title': 'Pongal',
+            'time_minutes': 60,
+            'price': Decimal('4.50'),
+            'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
         }
 
         res = self.client.post(RECIPES_URL, payload, format='json')
@@ -313,7 +312,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         new_ingredient = Ingredient.objects.get(user=self.user, name='Limes')
         self.assertIn(new_ingredient, recipe.ingredients.all())
-    
+
     def test_update_recipe_assign_ingredient(self):
         ingredient1 = Ingredient.objects.create(user=self.user, name='Pepper')
         recipe = create_recipe(user=self.user)
