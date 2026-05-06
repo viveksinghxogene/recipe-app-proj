@@ -8,10 +8,10 @@ from django.contrib.auth.models import (
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password = None, **extra_field):
+    def create_user(self, email, password=None, **extra_field):
         if not email:
             raise ValueError('The email is required to create a User')
-        user = self.model(email = self.normalize_email(email), **extra_field)
+        user = self.model(email=self.normalize_email(email), **extra_field)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length = 255, unique = True)
+    email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
@@ -41,11 +41,11 @@ class Recipe(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    title = models.CharField(max_length = 255)
-    description = models.TextField(blank = True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
     time_minutes = models.IntegerField()
-    price = models.DecimalField(max_digits = 5, decimal_places=2)
-    link = models.CharField(max_length = 255, blank=True)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    link = models.CharField(max_length=255, blank=True)
     tags = models.ManyToManyField('Tag')
     ingredients = models.ManyToManyField('Ingredient')
 

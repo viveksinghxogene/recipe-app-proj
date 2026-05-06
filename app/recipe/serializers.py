@@ -20,12 +20,13 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, required=False)
-    ingredients = IngredientSerializer(many= True, required= False)
+    ingredients = IngredientSerializer(many=True, required=False)
+
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags','ingredients']
+        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags', 'ingredients']
         read_only_fields = ['id']
-    
+
     def _get_or_create_tags(self, tags, recipe):
         auth_user = self.context['request'].user
 
@@ -35,6 +36,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 **tag,
             )
             recipe.tags.add(tag_obj)
+
     def _get_or_create_ingredients(self, ingredients, recipe):
         auth_user = self.context['request'].user
 
@@ -47,14 +49,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tags = validated_data.pop('tags', [])
-        ingredients = validated_data.pop('ingredients',[])
+        ingredients = validated_data.pop('ingredients', [])
         recipe = Recipe.objects.create(**validated_data)
-        # auth_user = self.context['request'].user
         self._get_or_create_tags(tags, recipe)
         self._get_or_create_ingredients(ingredients, recipe)
 
         return recipe
-    
+
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredients', None)
@@ -72,18 +73,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-    def _get_or_create_ingredients(self, ingredients, recipe):
-        auth_user = self.context['request'].user
-
-        for ingredient in ingredients:
-            ingredient_obj, created = Ingredient.objects.get_or_create(
-                user=auth_user,
-                **ingredient,
-            )
-            recipe.ingredients.add(ingredient_obj)
-
-
 
 
 class RecipeDetailSerializer(RecipeSerializer):

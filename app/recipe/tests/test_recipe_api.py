@@ -16,8 +16,10 @@ RECIPES_URL = reverse('recipe:recipe-list')
 def detail_url(recipe_id):
     return reverse('recipe:recipe-detail', args=[recipe_id])
 
+
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
+
 
 def create_recipe(user, **params):
     defaults = {
@@ -45,10 +47,9 @@ class PublicRecipeAPITests(TestCase):
 
 
 class PrivateRecipeApiTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
-        self.user = create_user(email='user@example.com',password='test123')
+        self.user = create_user(email='user@example.com', password='test123')
         self.client.force_authenticate(self.user)
 
     def test_retrieve_recipes(self):
@@ -64,16 +65,12 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_recipe_list_limited_to_user(self):
-        other_user = create_user(email='other@example.com',password='test123')
-
+        other_user = create_user(email='other@example.com', password='test123')
         create_recipe(user=other_user)
         create_recipe(user=self.user)
-
         res = self.client.get(RECIPES_URL)
-
         recipes = Recipe.objects.filter(user=self.user)
         serializer = RecipeSerializer(recipes, many=True)
-
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -175,8 +172,8 @@ class PrivateRecipeApiTests(TestCase):
     
     def test_create_recipe_with_new_tags(self):
         payload = {
-            'title': 'Thai Prawn Curry',
-            'time_minutes': 30,
+            'title':'Thai Prawn Curry',
+            'time_minutes':30,
             'price': Decimal('2.50'),
             'tags': [{'name': 'Thai'}, {'name': 'Dinner'}]
         }
@@ -201,10 +198,10 @@ class PrivateRecipeApiTests(TestCase):
         tag_indian = Tag.objects.create(user=self.user, name='Indian')
 
         payload = {
-            'title': 'Pongal',
-            'time_minutes': 60,
-            'price': Decimal('4.50'),
-            'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
+        'title': 'Pongal',
+        'time_minutes': 60,
+        'price': Decimal('4.50'),
+        'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
         }
 
         res = self.client.post(RECIPES_URL, payload, format='json')
@@ -321,7 +318,6 @@ class PrivateRecipeApiTests(TestCase):
         ingredient1 = Ingredient.objects.create(user=self.user, name='Pepper')
         recipe = create_recipe(user=self.user)
         recipe.ingredients.add(ingredient1)
-
         ingredient2 = Ingredient.objects.create(user=self.user, name='Chili')
         payload = {'ingredients': [{'name': 'Chili'}]}
         url = detail_url(recipe.id)
